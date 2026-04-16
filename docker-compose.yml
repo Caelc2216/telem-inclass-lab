@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  llama-cpp:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./Qwen3.5-2B-Q8_0.gguf:/models/Qwen3.5-2B-Q8_0.gguf:ro
+      - ./models:/models
+    environment:
+      - LLAMA_ARG_MODEL=/models/Qwen3.5-2B-Q8_0.gguf
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  # open-webui:
+  #   image: ghcr.io/open-webui/open-webui:main
+  #   ports:
+  #     - "3000:8080"
+  #   environment:
+  #     - 'OPENAI_API_BASE_URL=http://llama-cpp:8080/v1'
+  #   depends_on:
+  #     - llama-cpp
